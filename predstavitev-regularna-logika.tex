@@ -1,0 +1,763 @@
+\documentclass[14pt]{beamer}
+% Možne velikosti pisav so: 8pt, 9pt, 10pt, 11pt, 12pt, 14pt, 17pt, 20pt
+
+% Nastavitve za šumnike
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+% \usepackage[slovene]{babel}
+
+% To potrebujemo, da bomo lahko delali zapiske za predavatelja
+\usepackage{pgfpages}
+
+% Treba je ločiti zapiske za predavatelja in prosojnice za občinstvo.
+% To lahko naredimo v beamerju, glej
+% https://gist.github.com/andrejbauer/ac361549ac2186be0cdb
+
+% Primer tako narejenih prosojnic:
+% http://math.andrej.com/wp-content/uploads/2016/06/hott-reals-cca2016.pdf
+
+% Izberemo, ali bomo naredili samo prosojnice, samo zapiske ali oboje
+
+\setbeameroption{hide notes}                        % samo prosojnice
+% \setbeameroption{show only notes}                   % samo zapiski
+% \setbeameroption{show notes on second screen=right}  % oboje
+
+% Ali naj se \item-i pojavljajo zaporedoma, ali vsi naenkrat?
+% Naj se pojavljajo zaporedoma:
+% \beamerdefaultoverlayspecification{<+->}
+
+% Minimalistični still
+% \mode<presentation>
+ \usetheme{Boadilla}
+ %\useoutertheme{default}
+ \useoutertheme{default}
+% \usecolortheme{rose}
+
+% Malo manj dolgočasna pisava
+\usepackage{palatino}
+\usefonttheme{serif}
+
+% Izklopimo navigacijske simbole, ker so neuporabni
+\setbeamertemplate{navigation symbols}{}
+
+% Nastavimo ozadje
+
+% Aktiviramo oštevilčenje strani
+%\setbeamertemplate{footline}[frame number]{}
+
+% Stil za zapiske
+%\setbeamertemplate{note page}{\pagecolor{yellow!5}\insertnote}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage{tikz-cd} 
+\usetikzlibrary{babel} % this fixes problems with tikz-cd
+
+\usepackage{bussproofs} % package for writing natural deduction tree-style proofs
+
+\DeclareMathOperator{\graph}{graph}
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}
+
+\title{Regular logic and regular categories}
+\author{}
+\date{}
+
+\begin{document}
+
+  \begin{frame}
+    \titlepage
+
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{High level idea}
+    \pause
+    \begin{itemize}
+      \item We have a logic $\mathcal{L}$ and a notion of a theory $T$ in this logic.
+      \pause
+      \item We define the concept of a model of the theory $T$ in categories with appropriate structure.
+      \pause
+      \item Validity of the logic $\mathcal{L}$. Everything we can prove with the rules
+        of inference from $\mathcal{L}$ must hold in all models.
+      \pause
+      \item Completeness. There is a special model, that allows us to show, that everything
+        that holds for all models of $T$, can be proven in $T$.
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Regular logic}
+    To define a regular logic we first need a \emph{regular signature}
+    $\Sigma$, which is comprised of:
+    \begin{itemize}
+      \pause
+      \item a set of sorts $\mathrm{sort}_{\Sigma} = \{ X_{1}, X_{2}, X_{3}, \ldots{} \}$
+      \pause
+      \item a set of function symbols $\mathrm{func}_{\Sigma}$ of elements of the form
+      \[ f : ( X_{1}, X_{2}, \ldots, X_{n} ) \to Y \]
+      where $X_{1}, \ldots{}, X_{n}, Y$ are sorts.
+      \pause
+      \item a set of relation $\mathrm{rel}_{\Sigma}$ of elements of the form
+        \[ R : (X_{1}, X_{2}, \ldots, X_{n} ) \]
+      where $X_{1}, \ldots{}, X_{n}$ are sorts.
+      \end{itemize}
+  \end{frame}
+
+  \begin{frame}
+    \begin{block}{Note}
+      A special case of function symbols are constants $c : () \to Y$ that are just
+      function symbols from the empty domain.
+    \end{block}
+    \pause 
+    \begin{block}{Note}
+      We frequently denote $X_1, \ldots, X_n$ as $\bar{X}$.
+    \end{block}
+  \end{frame}
+
+  \begin{frame}
+    Once we have a regular signature $\Sigma$, we can define a language $\mathcal{L}(\Sigma)$.
+    \pause
+    The language consists of \emph{variables}, \emph{terms} and \emph{formulas}.
+    \pause
+    \begin{itemize}
+      \pause
+      \item For each sort $X$ we have countably many variables $x_1, x_2, x_3, \ldots : X$.
+      \vspace{1em}
+      \pause
+      \item We define terms inductively:
+        \begin{itemize}
+          \vspace{1em}
+          \pause
+          \item each variable $x : X$ is a term of sort $X$
+          \vspace{1em}
+          \pause
+          \item if we already constructed terms $t_1, \ldots t_n$ of sorts $X_1, \ldots X_n$
+            and $f : (X_1, \ldots, X_n) \to Y$ is a function symbol, then $f(t_1, \ldots, t_n)$
+            is a term of sort $Y$
+        \end{itemize}
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}
+    \begin{itemize}
+      \item We define formulas inductively:
+      \vspace{1em}
+      \pause
+        \begin{itemize}
+          \item if $t_1$ and $t_2$ are terms of sort $X$, then $t_1 =_X t_2$ is a formula.
+            \pause
+            We usually don't write the index $X$ if it's clear from context
+          \vspace{1em}
+          \pause
+          \item the logical constant $\top$ is a formula. It represents a true statement
+          \vspace{1em}
+          \pause
+          \item if we already constructed terms $t_1, \ldots t_n$ of sorts $X_1, \ldots X_n$
+            and $R : (X_1, \ldots, X_n)$ is a relation symbol, then $R(t_1, \ldots, t_n)$
+            is a formula
+          \vspace{1em}
+          \pause
+          \item if $\varphi$ and $\psi$ are formulas, then $\varphi \land \psi$ and $\exists (x : X) \varphi$
+            are formulas
+        \end{itemize}
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Theory}
+    A \emph{theory} $T$ formulated in the language $\mathcal{L}(\Sigma)$ consists of a set
+    of sequents \( \Gamma \mid \varphi \vdash \psi \), \pause where $\Gamma$ is
+    a \emph{context} of variables, that contains all the free variables that occur in
+    $\varphi$ and $\psi$.
+    \pause \\
+    \vspace{1em}
+    We interpret this sequent as: "in the theory $T$, in the context $\Gamma$, $\varphi$ implies $\psi$."
+    \pause \\
+    \vspace{1em}
+    If the premise of a sequent if $\top$, then we write it simply as $\Gamma \mid \psi$.
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Inference rules}
+    For a regular logic, we define rules of inference
+    of the form
+    \begin{prooftree}
+      \AxiomC{$\Gamma_1 \mid A_1$} \AxiomC{$\ldots$} \AxiomC{$\Gamma_n \mid A_n$}
+      \TrinaryInfC{$\Delta \mid B$}
+    \end{prooftree}  
+    where $A_i$ are of the form $\varphi_i \vdash \psi_i$.
+    We divide them into $3$ categories.
+    
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Structural rules}
+      \begin{enumerate}
+      \item
+        \begin{prooftree}
+          \AxiomC{} \UnaryInfC{$\Gamma \mid \varphi \vdash \varphi$}
+        \end{prooftree}
+      \item
+        \begin{prooftree}
+          \AxiomC{$\Gamma \mid \varphi \vdash \psi$} \AxiomC{$\Gamma \mid \psi \vdash \rho$}
+          \BinaryInfC{$\Gamma \mid \varphi \vdash r$}
+        \end{prooftree}
+      \item
+        \begin{prooftree}
+          \AxiomC{$\Gamma \mid \varphi \vdash \psi$}
+          \UnaryInfC{$\Gamma, y:Y \mid \varphi \vdash \psi$}
+        \end{prooftree}
+      \item
+        \begin{prooftree}
+          \AxiomC{$\Gamma, y:B \mid \varphi \vdash \psi$}
+          \AxiomC{$\Gamma \mid b : B$}
+          \BinaryInfC{$\Gamma \mid \varphi[b/y] \vdash \psi[b/y]$}
+        \end{prooftree}
+      \end{enumerate}
+
+  \end{frame}
+
+
+  \begin{frame}
+  \frametitle{Rules of logic}
+
+      \begin{enumerate}\addtolength{\itemsep}{0.7\baselineskip}
+    \item
+      \begin{prooftree}
+        \AxiomC{} \UnaryInfC{$\Gamma \mid \varphi \vdash \top$}
+      \end{prooftree}
+    \item
+      \begin{prooftree}
+        \AxiomC{$\Gamma \mid \rho \vdash \varphi$} \AxiomC{$\Gamma \mid \rho \vdash \psi$} \doubleLine
+        \BinaryInfC{$\Gamma \mid \rho \vdash \varphi \wedge \psi$}
+      \end{prooftree}
+    \item
+      \begin{prooftree}
+        \AxiomC{$\Gamma \mid \exists (y:Y) \psi \vdash \varphi$} \doubleLine
+        \UnaryInfC{$\Gamma, y:Y \mid \psi \vdash \varphi$}
+      \end{prooftree}
+    \end{enumerate}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Rules of equality}
+    
+    \begin{enumerate}\addtolength{\itemsep}{0.7\baselineskip}
+    \item $x:X \mid \top \vdash x = x$
+    \item
+      $x_1:X,x_2:X \mid x_1 = x_2 \vdash x_2 = x_1$
+    \item
+      $x_1,x_2,x_3:X \mid x_1 = x_2 \wedge x_2 = x_3 \vdash x_1 = x_3$
+    \item
+      $\bar{x},\bar{y}:\bar{X} \mid \bar{x} = \bar{y} \vdash
+      f(\bar{x}) = f(\bar{y})$
+    \item
+      $\bar{x},\bar{y} : \bar{X} \mid \bar{x} = \bar{y} \wedge R(\bar{x}) \vdash
+      \mathrm{R}(\bar{y})$, where
+      $R : \bar{X}$
+    \end{enumerate}
+
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Deduction relation}
+    We define a deduction in $T$, which we denote as 
+    \[\Gamma \mid \varphi \vdash_T \psi\]
+    \pause
+    to mean a derivation with the above rules, with an added axiom
+    \[  \mathrm{FV}(\varphi) \cup \mathrm{FV}(\psi) \mid \varphi \vdash_T \psi \]
+    for each sequent $\mathrm{FV}(\varphi) \cup \mathrm{FV}(\psi)  \mid \varphi \vdash \psi$ in $T$.
+  \end{frame}
+
+  \begin{frame}[fragile]
+    \frametitle{Regular categories}
+    To define a model, we need an appropriate class of categories.
+    \begin{definition}
+      Let $\mathcal{C}$ be a category and $X \in \mathcal{C}$ an object.
+      A \emph{subobject} of $X$ is an equivalence class of monomorphisms
+      $\alpha : A \to X$. 
+      \pause
+      % Two monomorphisms $\alpha : A \to X$ and
+      % $\beta : B \to X$ are equivalent if they are isomorphic over $X$.
+      
+      \begin{center}
+        \begin{tikzcd}
+          A \ar[dr, "\alpha"'] \ar[rr, "\cong"] & & B \ar[dl, "\beta"] \\
+          & X &
+        \end{tikzcd}
+      \end{center}
+    \end{definition}
+  \end{frame}
+
+  \begin{frame}
+    \begin{definition}
+      We denote the class of all subobjects of $X$ as $\mathrm{Sub}(X)$.
+    \end{definition}
+    \pause
+    We can equip $\mathrm{Sub}(X)$ with a partial order, where $A \leq B$ if
+    $\alpha : A \to X$ factors through $\beta : B \to X$.
+    \pause
+  \end{frame}
+
+  \begin{frame}[fragile]
+    Let's say $\mathcal{C}$ has all pullbacks.
+    \pause
+    Then for any $A, B \in \mathrm{Sub}(X)$ we can define their \emph{meet} or
+    \emph{greatest lower bound} as the pullback
+    \begin{center}
+      \begin{tikzcd}
+        A \times_X B \ar[d] \ar[r] & B \ar[d, "\beta"] \\
+        A \ar[r, "\alpha"] & X
+      \end{tikzcd}
+    \end{center}
+  \end{frame}
+
+  \begin{frame}[fragile]
+    Let $f : X \to Y$ be a morphism in $\mathcal{C}$. We get a map
+    \[ f^{-1} : Sub(Y) \to Sub(X) \]
+    \pause
+    induced by the pullback over $f$
+    \begin{center}
+      \begin{tikzcd}
+        f^{-1}B \ar[d] \ar[r] & B \ar[d, "\beta"] \\
+        X \ar[r, "f"] & Y
+      \end{tikzcd}
+    \end{center}
+    \pause
+    This map preserves meets.
+  \end{frame}
+
+  \begin{frame}[fragile]
+    \begin{definition}
+      Let $f : X \to Y$ be a morphism in $\mathcal{C}$. We call the pair of monomorphisms
+      $(p_1, p_2)$ in the pullback
+      \begin{center}
+        \begin{tikzcd}
+          X \times_Y X \ar[d, "p_1"'] \ar[r, "p_2"] & X \ar[d, "f"] \\
+          X \ar[r, "f"] & Y
+        \end{tikzcd}
+      \end{center}
+      the \emph{kernel pair} of $f$.
+    \end{definition}
+  \end{frame}
+
+  \begin{frame}[fragile]
+    \begin{definition}
+      An epimorphism $f : X \to Y$ is called \emph{regular} if it is the coequaliser
+      of some pair of morphisms.
+      \begin{center}
+        \begin{tikzcd}
+          Z \ar[r, shift left, "g"] \ar[r, shift right, "h"'] & X \ar[r, "f"] & Y 
+        \end{tikzcd}
+      \end{center}
+    \end{definition}
+    \pause
+    \begin{definition}
+      A category $\mathcal{C}$ is \emph{regular} if it has all finite limits,
+      each kernel pair has a coequaliser and pullbacks preserve regular epimorphisms.
+    \end{definition}
+  \end{frame}
+
+  \begin{frame}
+    \begin{definition}
+      Let $\mathcal{C}$ and $\mathcal{D}$ be regular categories.A functor
+      $F : \mathcal{C} \to \mathcal{D}$ is called \emph{regular} if it preserves finite
+      limits and coequalisers of kernel pairs.
+    \end{definition}
+    \pause
+    \begin{definition}
+      $\mathbf{RegCat}$ is the category whose objects are regular categories and
+      morphims are regualar functors.
+    \end{definition}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Examples}
+    \begin{itemize}
+      \item<1-> The category $\mathbf{Set}$ is regular.
+      \item<2-> $\mathbf{Grp}$ is regular.
+      \item<3-> If $\mathbb{T}$ is an algebraic theory and $\mathcal{C}$ is regular,
+        then $\mathbf{Mod}(\mathbb{T}, \mathcal{C})$ is regular.
+      \item<4-> If $\mathcal{C}$ is regular and $X \in \mathcal{C}$ then $\mathcal{C}/X$
+        is regular.
+      \item<5-> $\mathbf{Top}^{\mathrm{op}}$ is regular.
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Regular epimorphisms $\approx$ surjections}
+      Let $\mathcal{C}$ be a regular category, then:
+      \begin{itemize}
+        \item<2-> Each regular epimorphism is the coequaliser of its kernel pair.
+        \item<3-> A morphism that is both a regular epimorphism and a monomorphism is an
+          isomorphism.
+        \item<4-> A composition of regular epimorphisms is a regular epimorphism.
+      \end{itemize}
+  \end{frame}
+
+  \begin{frame}[fragile]
+    \frametitle{Factorization in regular categories}
+    Let $\mathcal{C}$ be a regular category and $f : X \to Y$.
+    \pause \\
+    Then $f$ can be factorized into
+    \begin{center}
+      \begin{tikzcd}
+        X \ar[dr, two heads, "e"'] \ar[rr, "f"] & & Y \\
+        & I \ar[ur, tail, "m"'] &
+      \end{tikzcd}
+    \end{center}
+    where $e$ is a regular epimorphism and $m$ is a monomorphism.
+    \pause
+    This factorization is unique up to isomorphism.
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Images of morphisms}
+    In the factorization $f = m \circ e$ we call the subobject represented by $m$
+    the \emph{image} of $f$.
+    \pause \\
+    \vspace*{1em}
+    We denote this as either $\mathrm{Im}(f)$ or $\exists_f X$.
+    \pause \\
+    \vspace*{1em}
+    For a subobject $\alpha : A \to X$ we define its image under $f$ as
+    \[ \exists_f A := \mathrm{Im}(f \circ \alpha) \]
+    This gives a well defined map $\exists_f : \mathrm{Sub}(X) \to \mathrm{Sub}(Y)$.
+  \end{frame}
+  
+  \begin{frame}
+    \frametitle{Relations}
+    We can view a subobject $R \rightarrowtail X \times Y$ as a relation
+    between "elements" of $X$ and $Y$. We call a relation $R$:
+    \pause
+    \begin{itemize}
+      \item \emph{Total} if $\exists_{\pi_1}R = X$ 
+        \pause
+        (intuitively this means
+        that the set of all $x$, such that there exists a $y$ for which $xRy$
+        is equal to $X$).
+        \pause
+      \item \emph{Functional} if the cannonical morphism 
+        $R \times_X R \to X \times Y \times Y$ factors through the inclusion
+        $\mathrm{id}_X \times \Delta_Y : X \times Y \to X \times Y \times Y$
+        \pause
+        (intuitively this means that from $xRy_1$ and $xRy_2$ it follows
+        $y_1 = y_2$).
+    \end{itemize}
+
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Graph of a morphism}
+    \begin{definition}
+      Let $f : X \to Y$ be a morphism in a regualr category $\mathcal{C}$.
+      Then the \emph{graph} of $f$ is the subobject
+      \[  \graph (f) \to X \times Y \]
+      defined as the image of the morphism $\langle \mathrm{id}_X, f \rangle$.
+    \end{definition}
+    \begin{block}{Note}
+      The cannonical morphism $X \to \graph(f)$ is an isomorphism.
+    \end{block}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Graph of a morphism}
+    \begin{proposition}
+      Let $\mathcal{C}$ be a regular category.
+      \begin{enumerate}
+        \item[(i)]<2-> The graph of a morphism $f : X \to Y$ is a total and functional
+          relation on $X \times Y$. 
+        \item[(ii)]<3-> For each total and functional relation $R \rightarrowtail X \times Y$
+          there exists a unique morphism $f : X \to Y$ such that $R = \graph(f)$. 
+      \end{enumerate}
+    \end{proposition}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Interpretation and model}
+    Let $\mathcal{L}(\Sigma)$ be a language. An \emph{interpretation} $M$ in a
+    category $\mathcal{C}$ consists of:
+    \begin{itemize}
+      \item<2-> An object $X^{(M)}$ for each sort $X \in \mathrm{sort}_\Sigma$.
+      \item<3-> A morphism $f^{(M)} : X_1^{(M)} \times X_n^{(M)} \to Y^{(M)}$
+        for each function symbol $f : (X_1, \ldots, X_n) \to Y$.
+      \item<4-> A subobject $R^{(M)} \rightarrowtail X_1^{(M)} \times X_n^{(M)}$
+        for each relation symbol $R : (X_1, \ldots, X_n)$.
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}
+    We extend the interpretation to all terms and formulas of $\mathcal{L}(\Sigma)$.
+    \pause \\
+    \vspace{1em}
+    To each term $t : Y$ in the context $\bar{z} : \bar{Z}$ we assign a morphism 
+    $t(\bar{z}) : \bar{Z}^{(M)} \to Y^{(M)}$.
+    \pause \\
+    \vspace{1em}
+    To each formula $\varphi$ in the context $\bar{z} : \bar{Z}$ we assign a subobject
+    $\{ \bar{z} \mid \varphi \}^{(M)} \rightarrowtail \bar{Z}^{(M)}$.
+  \end{frame}
+
+  \begin{frame}
+    \begin{enumerate}
+      \item If $x$ is a variable of sort $X$ then $x(\bar{z})^{(M)}$ is defined as
+        the composition $\bar{Z}^{(M)} \xrightarrow{\pi} X^{(M)} \xrightarrow{\mathrm{id}} X^{(M)}$.
+        \vspace{1em}
+      \item If $f : (X_1, \ldots, X_n) \to Y$ is a function symbol and $t_i$ are terms
+        of sort $X_i$ then $f(t_1, \ldots, t_n)^{(M)}$ in the context $\bar{z} : \bar{Z}$ 
+        is defined as the composition
+        $ \bar{Z}^{(M)} \xrightarrow{\langle t_1^{(M)}, \ldots, t_n^{(M)} \rangle} \bar{X}^{(M)} 
+        \xrightarrow{f^{(M)}} Y^{(M)}$.
+    \end{enumerate}
+  \end{frame}
+
+  \begin{frame}[fragile]
+    \begin{enumerate}
+      \setcounter{enumi}{2}
+      \item To the formula $\bar{z} : \bar{Z} \mid t_1 = t_2$ we assign a subobject
+        $\{\bar{z} \mid t_1 = t_2 \}^{(M)}$ defined as the equaliser
+        \begin{center}
+          \begin{tikzcd}
+            \bar{Z}^{(M)} \ar[r, shift left, "t_1(\bar{z})^{(M)}"] \ar[r, shift right, "t_2(\bar{z})^{(M)}"'] &
+            X^{(M)}
+          \end{tikzcd}
+        \end{center}
+      \item For a relation symbol $R : \bar{X}$ we define $\{ \bar{z} \mid R(t_1, \ldots, t_n)\}^{(M)}$
+        via the pullback
+        \begin{center}
+          \begin{tikzcd}
+            \{\bar{z} \mid R(t_1, \ldots, t_n)\}^{(M)} \ar[d] \ar[r, hook] &
+            \bar{Z}^{(M)} \ar[d, "\langle {t_1^{(M)}, \ldots ,t_n^{(M)}} \rangle"] \\
+            R^{(M)} \ar[r, hook] & \bar{X}^{(M)}
+          \end{tikzcd}
+        \end{center}
+    \end{enumerate}
+  \end{frame}
+
+  \begin{frame}
+    \begin{enumerate}
+      \setcounter{enumi}{4}
+      \item $\{ \bar{z} \mid \top \}^{(M)}$ is equal $\bar{Z}^{(M)}$.
+      \vspace{1em}
+      \item $\{\bar{z} \mid \varphi \wedge \psi\}^{(M)} = \{\bar{z} \mid
+        \varphi\}^{(M)} \wedge \{\bar{z} \mid \psi\}^{(M)}$.
+      \vspace{1em}
+      \item $\{\bar{z} \mid \exists x \varphi\}^{(M)} =
+        \exists_{\pi}\{(x, \bar{z}) \mid \varphi\}^{(M)}$, where
+        $\pi$ is the projection
+        $X^{(M)} \times \bar{Z}^{(M)} \xrightarrow{\pi} \bar{Z}^{(M)}$.
+    \end{enumerate}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Model}
+    \begin{definition}
+      An interpretation $M$ is called a \emph{model for the sequent}
+      $\varphi \vdash \psi$ 
+      \pause
+      if 
+      $\{ \bar{x} \mid \varphi \}^{(M)} \leq \{\bar{x} \mid \psi \}^{(M)}$
+      as subobjects of $\bar{X}$, \pause
+      where $\bar{x} : \bar{X}$ are the free variables
+      of $\varphi$ and $\psi$. \pause
+      We denote this as
+      \[ M \models \varphi \vdash \psi. \]
+    \end{definition}
+    \pause
+    \begin{definition}
+      An interpretation $M$ is a \emph{model of the theory} $T$ if it is a model
+      for each sequent $\varphi \vdash \psi$ in $T$.
+    \end{definition}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Validity}
+    \begin{theorem}
+      Let $T$ be a regular theory and $M$ a model of $T$ in a regular category
+      $\mathcal{C}$. \pause
+      If there is a derivation
+      $\bar{x} : \bar{X} \mid \varphi \vdash \psi$ in the theory $T$, then
+      $M \models \varphi \vdash \psi$.
+    \end{theorem}
+    \pause
+    \begin{proof}
+      By induction on the structure of derivations.
+    \end{proof}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Category of models}
+    Let $T$ be a regular theory. \pause For any regular category $\mathcal{C}$ we can form
+    the category of models of $T$ in $\mathcal{C}$, which we denote as
+    $\mathbf{Mod}(T, \mathcal{C})$.
+    \pause \\
+    The morphisms in $\mathbf{Mod}(T, \mathcal{C})$ are families of morphisms
+    $$\{h_X : X^{(M)} \to X^{(N)} \}_{X \in \mathrm{sort}_{\Sigma}},$$
+    \pause
+    which commute with the interpretations of function and relation symbols of
+    $\mathcal{L}(\Sigma)$. \pause We extend this to all terms and formulas by induction.
+
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Internal logic}
+    Let $\mathcal{C}$ be a regular category. We assign to it a regular signature
+    $\Sigma_{\mathcal{C}}$ and language $\mathcal{L}(\Sigma_{\mathcal{C}})$.
+    \pause
+    \vspace{1em}
+    \begin{itemize}
+      \item The sorts of $\Sigma_{\mathcal{C}}$ are the objects of $\mathcal{C}$.
+      \pause
+      \vspace{1em}
+      \item For each morphism $f : \bar{X} \to Y$ we add a function symbol
+        $f_{\bar{X},Y} : \bar{X} \to Y$ to $\mathcal{L}(\Sigma_{\mathcal{C}})$.
+      \pause
+      \vspace{1em}
+      \item For each subobject $R \rightarrowtail \bar{X}$ we add a relation symbol
+        $R_{\bar{X}} : \bar{X}$ to $\mathcal{L}(\Sigma_{\mathcal{C}})$.
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Internal logic}
+    The language $\mathcal{L}(\Sigma_{\mathcal{C}})$ has a cannonical interpretation
+    $I^{\mathcal{C}}$ in $\mathcal{C}$. We abuse notation and write $\mathcal{C}$
+    instead of $I^{\mathcal{C}}$.
+    \vspace{1em}
+    \pause \\
+    The theory $T_{\mathcal{C}}$ is defined as the theory of this interpretation\pause ,
+    i.e. the set of all sequents $\Gamma \mid \varphi \vdash \psi$ which hold for
+    the interpretation $I^{\mathcal{C}}$.
+    \vspace{1em}
+    \pause \\
+    This allows us to describe the categorical structure of a regular category in
+    terms of regular logic.
+  \end{frame}
+
+  \begin{frame}
+    \begin{lemma}
+      Let $\mathcal{C}$ be a regular category.
+      \begin{itemize}
+      \item<2-> Let $X \xrightarrow{f} Y \xrightarrow{g} Z$ and
+        $X \xrightarrow{h} Z$.  Then $h = g \circ f$
+        if and only if
+        \[{\mathcal{C} \models (x:X \mid  h(x) = g(f(x)))}.\]
+      \item<3-> A morphism $m : X \to Y$ is mono exactly when
+        \[\mathcal{C} \models (x_1,x_2:X \mid m(x_1) = m(x_2) \vdash x_1 = x_2). \]
+      \item<4-> A morphism $f : X \to Y$ is a regular epimorphism exactly when
+        \[ \mathcal{C} \models (y:Y \mid \exists (x:X) f(x) = y). \]
+      \end{itemize}
+    \end{lemma}
+  \end{frame}
+
+  \begin{frame}
+    \begin{lemma}
+      Let $\mathcal{C}$ be a regular category.
+      \begin{itemize}
+        \item An object $X \in \mathcal{C}$ is terminal if and only if
+      \end{itemize}
+      \[ \mathcal{C} \models (x_1,x_2:X \mid x_1 = x_2) \quad \text{and} \quad
+      {\mathcal{C} \models \exists (x:X) (x=x)}.\]
+      \pause
+      \begin{itemize}
+        \item The morphisms $f : Z \to X$ and $g : Z \to Y$ make $Z$ into
+        the product of  $X$ and $Y$ if and only if
+      \end{itemize}
+      \[\mathcal{C} \models (z_1,z_2 \mid f(z_1) = f(z_2) \wedge
+        g(z_1) = g(z_2) \vdash z_1 = z_2)\] and
+      \[\mathcal{C} \models (x:X,y:Y \mid \exists (z:Z)(f(z) = x \wedge
+        g(z) = y)).\]
+    \end{lemma}
+  \end{frame}
+
+  \begin{frame}
+    \begin{corollary}
+      We can express that a category is regular in terms of its internal language.
+    \end{corollary}
+    \pause
+    \begin{corollary}
+      We can express that a functor between two regular categories is regular in
+      terms of the internal languages of the two categories.
+    \end{corollary}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{The syntactic category}
+    Let $T$ be a regular theory. We define its \emph{syntactic category} $\mathcal{R}(T)$
+    as:
+    \pause
+    \begin{itemize}
+      \item The objects are equivalence classes of formulas in a context, i.e.
+        $\Gamma \mid \varphi$. \pause Two formulas $\Gamma \mid \varphi$ and $\Gamma \mid \psi$
+        represent the same object, when we can derive $\Gamma \mid \varphi \vdash \psi$
+        and $\Gamma \mid \psi \vdash \varphi$ in $T$. \pause We denote the equivalence
+        class as $\{ \Gamma \mid \varphi \}$.
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}[fragile]
+    \begin{itemize}
+      \item A morphism 
+        $\{ \gamma(\bar{x}, \bar{y}) \} : \{\bar{x} \mid \varphi \} \to \{\bar{y} \mid \psi \}$
+        is a functional relation $\gamma$ in $T$. \pause 
+        This means we have derivations:
+        \begin{itemize}
+          \item  $\bar{x}:\bar{X},\bar{y}:\bar{Y} \mid \gamma(\bar{x},\bar{y})
+            \vdash p(\bar{x}) \wedge q(\bar{y})$
+          \item $\bar{x}:\bar{X} \mid (\bar{x}) \vdash \exists \bar{y} \gamma(\bar{x},\bar{y})$
+          \item $\bar{x}:\bar{X},\bar{y}_1 : \bar{Y},\bar{y}_2:\bar{Y} \mid
+            \gamma(\bar{x},\bar{y}_1) \wedge \gamma(\bar{x},\bar{y}_2) \vdash \bar{y}_1 = \bar{y}_2$
+        \end{itemize}
+      \pause
+      \item The composition of
+        \begin{equation*}
+          \begin{tikzcd}
+            \lbrace \bar{x} : \bar{X} \mid p \rbrace \ar[r, "{\lbrace \varphi \rbrace}"] & 
+            \lbrace \bar{y}:\bar{Y} \mid q \rbrace \ar[r, "{\lbrace \psi \rbrace}"] & 
+            \lbrace \bar{z}:\bar{Z} \mid r \rbrace
+          \end{tikzcd}
+        \end{equation*}
+        is given by the formula
+        \[ \bar{x}:\bar{X}, \bar{z}:\bar{Z} \mid \exists (\bar{y}:\bar{Y}) (\varphi(\bar{x},\bar{y}) \wedge
+          \psi(\bar{y},\bar{z})).\]
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}
+    \begin{proposition}
+      The syntactic category $\mathcal{R}(T)$ is a regular category.
+    \end{proposition}
+    \pause
+    It contains a cannonical interpretation $\mathcal{U}$ of the language 
+    $\mathcal{L}(\Sigma)$:
+    \pause
+    \begin{itemize}
+      \item $X^{(\mathcal{U})} = \{ x : X \mid \top \}$, where $x$ is a variable of sort $X$.
+      \pause
+      \item $f^{(\mathcal{U})} = \{ \bar{x}:\bar{X}, y : Y \mid f(\bar{x}) = y\}$, where
+        $f : \bar{X} \to Y$ is a function symbol.
+      \pause
+      \item $R^{(\mathcal{U})} = \{ \bar{x} : \bar{X} \mid R(\bar{x})\}$, where
+        $R : \bar{X}$ is a relation symbol.
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}
+    \begin{theorem}
+      The cannonical interpretation $\mathcal{U}$ is a model of the theory $T$
+      in $\mathcal{R}(T)$. \pause
+      The rules of inference of
+      regular logic are complete with regard to interpretations in small regular
+      categories.
+    \end{theorem}
+    
+    \begin{theorem}
+      For any regular category $\mathcal{C}$ there is an equivalence of categories
+      \[ \mathbf{Mod}(T, \mathcal{C}) \simeq \mathbf{RegCat}(\mathcal{R}(T), \mathcal{C}) \]
+    \end{theorem}
+  \end{frame}
+
+\end{document}
+
