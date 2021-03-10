@@ -1,0 +1,68 @@
+* Gameplan
+
+- Define regular logic. For this we first define a signature and a language.
+  For regular logic the signature will consist of a countable set of sorts,
+  a set of function symbols and relations symbols.
+  To build formulas in the language we will use the logical operations:
+  the truth constant, conjunction and exsistential quantifier.
+  Once we hava a language we can define a theory, that will be a set of axioms
+  in the form of sequents in contexts.
+  To create proofs in regular logic we will use inference rules that we will chain
+  together into proof trees. When we define models of a regular theory we will want
+  to show that these inference rules are sound w.r.t the definition of a model.
+
+- Define regular categories. These will be categories with the appropriate structure
+  to interpret regular logic. They turn out to be categories where we can factorize
+  morphisms in a nice way, into a factorization that resembles the
+  injective-surjective factorization of maps between sets. This will allow us to
+  define an image of a morphism which in turn will be how we interpret the
+  exsistential quantifiers. The rest of the structure of a regular category will be
+  to interpret the other logical operations and make sure they all play nice with
+  each other.
+
+- Examples. We can look at a few examples of regular categories and show what the
+  regular structure is.
+
+- Regular epimorphisms. The factorization of morphisms in regular categories is into
+  a composition of a regular epimorphism and monomorphism. We will look how regular
+  epimorphisms behave in some ways like surjective maps between sets and how we
+  define images of morphisms via this factorization.
+
+- Interpretation & Model. Then we will define interpretations of the language of
+  regular logics. We will assign a morphism for each formula and a subobject for each
+  formula of a language. Then we will say when this interpretation models a sequent of a
+  theory and consequentially when it is a models of a theory (a theory beings
+  comprised of a set of sequents). This will be semantic entailment relation of our
+  interpretation.
+
+- Validity. We will say a few words on the soundness of the semantic relation. Namely
+  that it is sound with regard to the inference rules of regular logic.
+
+- Category of models. If we put all the models of a regular theory in some regular
+  category together and define an appropriate morphism between these models we get a
+  category that we call a category of models. Later on we will see how we can
+  describe each such model as a functor preserving the right structure from the
+  syntactic category of a regular theory to the category where this model lives.
+
+- Internal logic. Now we get to the fun stuff. For any regular category we can find a
+  regular theory, that we build from this category such that the category is exactly
+  a model of this theory.  Then we can express categorical properties of this
+  category, like when a morphism is a monomorphism or when an object is terminal in
+  regular logic internally in the category. So for instance if we have this internal
+  logic in some category \(C\), to prove a morphism \(f\) is mono instead of having
+  to take the compositions \(f \circ g = f \circ h\) and showing \(g = h\) for any
+  two appropriate \(g\) and \(h\) we can prove that \(f (x_{1}) = f (x_2)\) implies
+  \( x_1 = x_2 \) and x_1 and x_2 are just variables of type X. And the reasoning
+  goes the other way around, to prove a formula holds for a regular theory we can
+  just show some categorical statement of the category.
+
+- Syntactic category. For the above to really hold we actually need to show that
+  regular theories are complete for this notion of models. We do so using the
+  so-called syntactic category. This is a way of representing a regular theory in a
+  syntactically independent way. For each regular theory we construct a special
+  category that encodes all the information of the theory. In this category is a
+  special model of the theory such that we can express any model of the theory in any
+  regular category as a functorial image of this model. This gives an equivalance of
+  categories of models in a category and a functor category. This idea, of
+  representing models of a theory as functors that preserve a certain structure is
+  called functorial semantics. 

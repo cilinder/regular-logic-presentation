@@ -88,6 +88,21 @@
   \end{frame}
 
   \begin{frame}
+    \frametitle{Gameplan}
+    \begin{itemize}
+      \item Define regular logic
+      \item Define regular categories
+      \item Examples
+      \item Regular epimorphisms
+      \item Interpretation \& model
+      \item Soundness
+      \item Category of models
+      \item Internal logic
+      \item Syntactic category
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}
     \frametitle{Regular logic}
     To define a regular logic we first need a \emph{regular signature}
     $\Sigma$, which is comprised of:
@@ -95,11 +110,11 @@
       \pause
       \item a set of sorts $\mathrm{sort}_{\Sigma} = \{ X_{1}, X_{2}, X_{3}, \ldots{} \}$
       \pause
-      \item a set of function symbols $\mathrm{func}_{\Sigma}$ of elements of the form
+      \item a set of function symbols $\mathrm{func}_{\Sigma}$ 
       \[ f : ( X_{1}, X_{2}, \ldots, X_{n} ) \to Y \]
       where $X_{1}, \ldots{}, X_{n}, Y$ are sorts.
       \pause
-      \item a set of relation $\mathrm{rel}_{\Sigma}$ of elements of the form
+      \item a set of relation symbols $\mathrm{rel}_{\Sigma}$ 
         \[ R : (X_{1}, X_{2}, \ldots, X_{n} ) \]
       where $X_{1}, \ldots{}, X_{n}$ are sorts.
       \end{itemize}
@@ -274,10 +289,11 @@
   \begin{frame}[fragile]
     \frametitle{Regular categories}
     To define a model, we need an appropriate class of categories.
+    \pause
     \begin{definition}
-      Let $\mathcal{C}$ be a category and $X \in \mathcal{C}$ an object.
+      Let $\mathcal{C}$ be a category and $X \in \mathcal{C}$.
       A \emph{subobject} of $X$ is an equivalence class of monomorphisms
-      $\alpha : A \to X$. 
+      $\alpha : A \rightarrowtail X$. 
       \pause
       % Two monomorphisms $\alpha : A \to X$ and
       % $\beta : B \to X$ are equivalent if they are isomorphic over $X$.
@@ -293,11 +309,11 @@
 
   \begin{frame}
     \begin{definition}
-      We denote the class of all subobjects of $X$ as $\mathrm{Sub}(X)$.
+      The class of all subobjects of $X$ denoted as $\mathrm{Sub}(X)$.
     \end{definition}
     \pause
     We can equip $\mathrm{Sub}(X)$ with a partial order, where $A \leq B$ if
-    $\alpha : A \to X$ factors through $\beta : B \to X$.
+    $\alpha : A \rightarrowtail X$ factors through $\beta : B \rightarrowtail X$.
     \pause
   \end{frame}
 
@@ -312,6 +328,8 @@
         A \ar[r, "\alpha"] & X
       \end{tikzcd}
     \end{center}
+    \pause
+    This makes $\mathrm{Sub}(X)$ into a $\land$-semilattice.
   \end{frame}
 
   \begin{frame}[fragile]
@@ -573,7 +591,7 @@
   \end{frame}
 
   \begin{frame}
-    \frametitle{Validity}
+    \frametitle{Soundness}
     \begin{theorem}
       Let $T$ be a regular theory and $M$ a model of $T$ in a regular category
       $\mathcal{C}$. \pause
@@ -603,7 +621,8 @@
 
   \begin{frame}
     \frametitle{Internal logic}
-    Let $\mathcal{C}$ be a regular category. We assign to it a regular signature
+    Let $\mathcal{C}$ be a regular category. \pause
+    We assign to it a regular signature
     $\Sigma_{\mathcal{C}}$ and language $\mathcal{L}(\Sigma_{\mathcal{C}})$.
     \pause
     \vspace{1em}
