@@ -65,7 +65,7 @@
   {\usebeamercolor[fg]{emph}\only#2{\itshape}#1}%
 }
 
-\title{Regular logic and regular categories}
+\title{Regular logic and regular categories part II}
 \author{}
 \date{}
 
@@ -1090,6 +1090,50 @@
     \pause \\
     This allows us to describe the categorical structure of a regular category in
     terms of regular logic.
+  \end{frame}
+
+  \begin{frame}[fragile]
+    \frametitle{Example}
+    Let's say we have a diagram in $\mathcal{C}$
+    \begin{equation*}
+      \begin{tikzcd}
+        X \ar[r, "f"'] \ar[rr, bend left, "h"] & Y \ar[r, "g"'] & Z
+      \end{tikzcd}
+    \end{equation*}
+    \pause
+    In $\Sigma_{\mathcal{C}}$ we have:
+    \begin{itemize}
+      \item sorts $X, Y, Z$
+      \item function symbols $f_{X,Y}, g_{Y,Z},h_{X,Z}$
+    \end{itemize}
+    \pause
+    In $\mathcal{L}(\Sigma_{\mathcal{C}})$ we have:
+    \begin{itemize}
+      \item terms $f(x), g(f(x)), h(x)$
+      \item formula $g(f(x)) = h(x)$
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}[fragile]
+    \frametitle{Example}
+    In $\mathcal{C}$ we can interpret the terms $g(f(x))$ and $h(x)$
+    as the compositions
+    \begin{equation*}
+      \begin{tikzcd}
+        X \ar[r, "x^{(\mathcal{C})}"] & X \ar[r, "f^{(\mathcal{C})}"] \ar[rr, bend right, "h^{(\mathcal{C})}"'] & Y \ar[r, "g^{(\mathcal{C})}"] & Z
+      \end{tikzcd}
+    \end{equation*}
+    \pause
+    and the formula
+    $$x : X \mid g(f(x)) = h(x)$$
+    as a subobject of $X$. 
+    By definition this is
+    \begin{equation*}
+      \begin{tikzcd}
+        \{x : X \mid g(f(x)) = h(x)\}^{(\mathcal{C})} \ar[r, tail] &
+        X \ar[r, shift left, "g(f(x))^{(\mathcal{C})}"] \ar[r, shift right, "h(x)^{(\mathcal{C})}"'] & Z
+      \end{tikzcd}
+    \end{equation*}
   \end{frame}
 
   \begin{frame}
