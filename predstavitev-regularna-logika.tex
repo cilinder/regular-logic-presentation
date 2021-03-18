@@ -798,9 +798,11 @@
     \frametitle{Recap of part I}
 
     A \emph{theory} $T$ is a set of sequents.
-    \pause
-    We define a derivation relation in a theory $T$
-    as all derivations from the above rules together with an axtiom for each sequent of the theory.
+    A derivation in $T$
+    \[ \Gamma \mid \varphi \vdash_T \psi \]
+    is what we can derive 
+    with the rules of inference 
+    together with an axiom for each sequent of the theory.
   \end{frame}
 
   \begin{frame}[fragile]
@@ -973,9 +975,9 @@
   \begin{frame}
     \frametitle{Proof of soundness}
     \begin{itemize}
-      \item For an axiom $\Gamma \mid \varphi \vdash \psi$ we have by definition that
+      \item<1-> For an axiom $\Gamma \mid \varphi \vdash \psi$ we have by definition that
         \[ \{\Gamma \mid \varphi \}^{(M)} \leq \{\Gamma \mid \psi \}^{(M)} \]
-      \item Reflexivity $\Gamma \mid \varphi \vdash \varphi$ holds via the identity
+      \item<2-> Reflexivity $\Gamma \mid \varphi \vdash \varphi$ holds via the identity
         \[ \{\Gamma \mid \varphi \}^{(M)} \overset{\mathrm{id}}{\rightarrowtail} \{\Gamma \mid \varphi\}^{(M)} \]
     \end{itemize}
   \end{frame}
@@ -996,11 +998,12 @@
           \AxiomC{$\Gamma \mid \varphi \vdash \psi$}
           \UnaryInfC{$\Gamma, y:Y \mid \varphi \vdash \psi$}
         \end{prooftree}
-        We prove that
+        We can prove that
         \[\{(\bar{z},y) \mid \varphi \}^{(M)} = \pi^{-1}\{\bar{z} \mid \varphi \}^{(M)}\]
         by induction on the structure of $\varphi$.
+        \pause
         \begin{equation*}
-          \begin{tikzcd}[column sep=small, row sep=tiny]
+          \begin{tikzcd}[column sep=tiny, row sep=small]
             \{(\bar{z},y) \mid \varphi \} \ar[dd] \ar[dr, tail] \ar[rr, dashed] & & \{(\bar{z},y) \mid \psi \} \ar[dl, tail] \ar[dd]\\
             & \bar{Z} \times Y  & \\
             \{\bar{z} \mid \varphi \} \ar[dr, tail] \ar[rr, tail] & & \{\bar{z} \mid \psi \} \ar[dl, tail] \\
@@ -1012,16 +1015,16 @@
   \begin{frame}
     \frametitle{Proof of soundness}
     \begin{itemize}
-      \item Substitution 
+      \item<1-> Substitution 
         \begin{prooftree}
           \AxiomC{$\Gamma, y:B \mid \varphi \vdash \psi$}
           \AxiomC{$\Gamma \mid b : B$}
           \BinaryInfC{$\Gamma \mid \varphi[b/y] \vdash \psi[b/y]$}
         \end{prooftree}
         follows from another lemma that we prove by induction on the structure of formulas.
-      \item $\Gamma \mid \varphi \vdash \top$
+      \item<2-> $\Gamma \mid \varphi \vdash \top$
         By definition $\{\bar{x}:\bar{X} \mid \top\}^{(M)} = \bar{X}^{(M)}$
-      \item Conjunction. We defined
+      \item<3-> Conjunction. We defined
         $\{\bar{z} \mid \varphi \wedge \psi\}^{(M)} = \{\bar{z} \mid
                 \varphi\}^{(M)} \wedge \{\bar{z} \mid \psi\}^{(M)}$.
         Use induction and properties of pullbacks.
@@ -1261,6 +1264,31 @@
       For any regular category $\mathcal{C}$ there is an equivalence of categories
       \[ \mathbf{Mod}(T, \mathcal{C}) \simeq \mathbf{RegCat}(\mathcal{R}(T), \mathcal{C}) \]
     \end{theorem}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Idea of the equivalence}
+    In one direction, for two regular categories $\mathcal{E}, \mathcal{C}$ define
+    \[ \mathfrak{M}_{M, \mathcal{C}} : \mathbf{RegCat}(\mathcal{E}, \mathcal{C}) \to \mathbf{Mod}(T, \mathcal{C})\]
+    sends a regular functor $F : \mathcal{E} \to \mathcal{C}$ to a model $F(M)$.
+    \pause \\
+    Then take $\mathcal{E} = \mathcal{R}(T)$ and $M = \mathcal{U}$.
+    \[ \mathfrak{M}_{\mathcal{C}} : \mathbf{RegCat}(\mathcal{R}(T), \mathcal{C}) \to \mathbf{Mod}(T, \mathcal{C})\]
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Idea of the equivalence}
+    Other direction define
+    $$\mathfrak{F}_{\mathcal{C}} : \mathbf{Mod}(T, \mathcal{C}) \to \mathbf{RegCat}(\mathcal{R}(T), \mathcal{C})$$
+    that maps a model $M$ in $\mathcal{C}$ to the functor
+    \begin{align*}
+      \mathfrak{F}_{\mathcal{C}}(M) : \mathcal{R}(T) &\to \mathcal{C}\\
+      \{\bar{x}:\bar{X} \mid  p\} &\mapsto \{\bar{x}:\bar{X} \mid  p\}^{(M)} \\
+      (\{\gamma\} : \{\bar{x} \mid  p\} \to \{\bar{y} \mid  q\})
+                                                  &\mapsto (f : \{\bar{x} \mid  p\}^{(M)} \to \{\bar{y} \mid  q\}^{(M)}).
+    \end{align*}
+    \pause
+    where $f$ is defined such that $\mathrm{graph}(f) = \{ \gamma \}$.
   \end{frame}
 
 \end{document}
